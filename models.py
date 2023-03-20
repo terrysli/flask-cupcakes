@@ -7,9 +7,9 @@ db = SQLAlchemy()
 DEFAULT_IMG_URL = "https://tinyurl.com/demo-cupcake"
 
 class Cupcake(db.Model):
-    """Dessert."""
+    """Cupcake."""
 
-    __tablename__ = "dessert"
+    __tablename__ = "cupcakes"
 
     id = db.Column(
         db.Integer,
