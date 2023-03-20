@@ -1,0 +1,3 @@
+venv/
+psycopg2
+pycache
