@@ -60,26 +60,40 @@ def create_cupcake():
     # Return w/status code 201 --- return tuple (json, status)
     return (jsonify(cupcake=serialized), 201)
 
+
 @app.patch("/api/cupcakes/<int:cupcake_id>")
 def update_cupcake(cupcake_id):
     """Update cupcake information from posted JSON and return it
-    Expects JSON: {flavor, size, rating, image (optional)}
+    Expects JSON: {flavor, size, rating, image}; all optional
     Return JSON: {'cupcake': {id, flavor, size, rating, image}}"""
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
 
     data = request.json.copy()
-    keys = request.json.keys()
-    print ('data:', data)
-    print ('keys:', keys)
-    print ('cupcake:', cupcake)
-    for key in keys:
-        cupcake[key] = request.json[key]
+
+    cupcake.flavor = request.json.get("flavor", cupcake.flavor)
+    cupcake.size = request.json.get("size", cupcake.size)
+    cupcake.rating = request.json.get("rating", cupcake.rating)
+    cupcake.image = request.json.get("image", cupcake.image)
 
     db.session.commit()
 
     serialized = cupcake.serialize()
 
-    return jsonify(cupcake=serialized) 
+    return jsonify(cupcake=serialized)
+
+
+@app.delete("/api/cupcakes/<int:cupcake_id>")
+def delete_cupcake(cupcake_id):
+    """Delete cupcake from db and returns JSON of deleted cupcake
+    Return JSON: {deleted: [cupcake-id]}"""
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    serialized = cupcake.serialize()
+
+    db.session.delete(cupcake)
+    db.session.commit()
+
+    return jsonify(deleted=cupcake.id)
 
 

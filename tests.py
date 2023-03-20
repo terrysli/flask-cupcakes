@@ -50,6 +50,8 @@ class CupcakeViewsTestCase(TestCase):
         db.session.rollback()
 
     def test_list_cupcakes(self):
+        """Test listing data on all cupcakes"""
+
         with app.test_client() as client:
             resp = client.get("/api/cupcakes")
 
@@ -70,6 +72,8 @@ class CupcakeViewsTestCase(TestCase):
             })
 
     def test_get_cupcake(self):
+        """Test getting data on single cupcake"""
+
         with app.test_client() as client:
             url = f"/api/cupcakes/{self.cupcake_id}"
             resp = client.get(url)
@@ -87,6 +91,8 @@ class CupcakeViewsTestCase(TestCase):
             })
 
     def test_create_cupcake(self):
+        """Test creating a new cupcake and adding to db"""
+
         with app.test_client() as client:
             url = "/api/cupcakes"
             resp = client.post(url, json=CUPCAKE_DATA_2)
@@ -109,3 +115,40 @@ class CupcakeViewsTestCase(TestCase):
             })
 
             self.assertEqual(Cupcake.query.count(), 2)
+
+    def test_update_cupcake(self):
+        """Test patching data on a single cupcake"""
+
+        with app.test_client() as client:
+            url = f"/api/cupcakes/{self.cupcake_id}"
+            resp = client.patch(url, json={
+                "flavor": "banana",
+                "size": "large"
+                })
+
+            data = resp.json
+            print("data in test_update", data)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(data, {
+            "cupcake": {
+                "flavor": "banana",
+                "id": self.cupcake_id,
+                "size": "large",
+                "rating": 5,
+                "image": "http://test.com/cupcake.jpg"
+            }})
+            self.assertEqual(Cupcake.query.count(), 1)
+
+    def test_delete_cupcake_existing(self):
+        """Test deleting a cupcake from db"""
+
+        with app.test_client() as client:
+            url = f"/api/cupcakes/{self.cupcake_id}"
+            resp = client.delete(url)
+            data = resp.json
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(data, {"deleted": self.cupcake_id})
+            self.assertEqual(Cupcake.query.count(), 0)
+
