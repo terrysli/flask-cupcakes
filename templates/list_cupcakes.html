@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}All cupcakes{% endblock %}
+{% block content %}
+<ul>
+    {% for cupcake in cupcakes %}
+    <li>
+        <img src="{{ cupcake.image }}" alt="picture of cupcake">
+        <ul>
+            <li>{{ cupcake.flavor }}</li>
+            <li>{{ cupcake.size }}</li>
+            <li>{{ cupcake.rating }}</li>
+        </ul>
+    </li>    
+</ul>
+
+<form action="/api/cupcakes" method="POST">
+    <div class="col-6">
+        <label for="flavor">Flavor</label>
+        <input type="text" name="flavor" id="flavor" class="form-control">
+    </div>
+    <div>    
+        <label for="size">Size</label>
+        <input type="text" name="size" id="size" class="form-control">
+    </div>
+    <div>
+        <label for="rating">Rating</label>
+        <input type="text" name="rating" id="rating" class="form-control">
+    </div>
+    <div>
+        <label for="img_url">Image URL</label>
+        <input type="text" name="img_url" id="img_url" class="form-control">
+    </div>
+    <button class="btn btn-primary" type="submit">Add</button>
+</form>
+{% endblock %} 
